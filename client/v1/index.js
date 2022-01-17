@@ -32,7 +32,8 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // I can find on these e-shops
 // 2. Log the variable
 
-
+var cheapestTeeShirt = 'https://adresse.paris/t-shirts-et-polos/4238-t-shirt-ranelagh-1300000262026.html';
+console.log(cheapestTeeShirt);
 
 
 
@@ -49,11 +50,21 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // 1. Create a variable and assign it the number of products
 // 2. Log the variable
 
+var nbProducts = marketplace.length; 
+console.log(nbProducts);
 
 // 🎯 TODO: Brands name
 // 1. Create a variable and assign it the list of brands name only
 // 2. Log the variable
 // 3. Log how many brands we have
+
+var brandNames = [] // Create the variable
+for(let i = 0; i < marketplace.length; i++){
+  brandNames.push(marketplace[i].brand)
+}
+brandNames = [ ... new Set(brandNames)] //Transform the array into a set to suppress duplicates
+console.log(brandNames)
+console.log(brandNames.length)
 
 
 // 🎯 TODO: Sort by price
