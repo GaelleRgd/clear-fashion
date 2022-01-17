@@ -283,6 +283,13 @@ const COTELE_PARIS = [
 // 🎯 TODO: New released products
 // // 1. Log if we have new products only (true or false)
 // // A new product is a product `released` less than 2 weeks.
+let twoWeeksAgo = new Date(Date.now() - 12096e5); //12096e5 is two weeks in miliseconds
+let newProducts = true;
+for(let i = 0; i < COTELE_PARIS.length; i++){
+  let d = new Date(COTELE_PARIS[i].released); 
+  if(d.getTime() < twoWeeksAgo.getTime()){newProducts = false}
+}
+console.log("New products only : " + newProducts);
 
 
 // 🎯 TODO: Reasonable price
