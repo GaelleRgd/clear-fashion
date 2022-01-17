@@ -336,7 +336,12 @@ let jacket = blueJacket;
 jacket.favorite = true;
 
 // 1. Log `blueJacket` and `jacket` variables
+
+console.log(blueJacket);
+console.log(jacket);
+
 // 2. What do you notice?
+//Both objects have a "favorite" attribute now. 
 
 blueJacket = {
   'link': 'https://coteleparis.com/collections/tous-les-produits-cotele/products/la-veste-bleu-roi',
@@ -346,7 +351,10 @@ blueJacket = {
 
 // 3. Update `jacket` property with `favorite` to true WITHOUT changing blueJacket properties
 
-
+jacket = JSON.parse(JSON.stringify(blueJacket));; 
+jacket.favorite = true; 
+console.log(blueJacket);
+console.log(jacket);
 
 
 
@@ -358,4 +366,11 @@ blueJacket = {
 
 // 🎯 TODO: Save in localStorage
 // 1. Save MY_FAVORITE_BRANDS in the localStorage
+
+const jsonMY_FAVORITE_BRANDS = JSON.stringify(MY_FAVORITE_BRANDS); // convert the object into a json string
+localStorage.setItem("favBrands", jsonMY_FAVORITE_BRANDS); // save to localStorage
+
 // 2. log the localStorage
+const str = localStorage.getItem("favBrands"); // get the string from local storage
+const parsedObj = JSON.parse(str); // convert string to valid object4
+console.log(parsedObj);
