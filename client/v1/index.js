@@ -178,6 +178,11 @@ console.log(brands);
 // 1. For each brand, sort the products by price, from highest to lowest
 // 2. Log the sort
 
+for(let i = 0; i < brandNames.length; i++){
+  brands[brandNames[i]] = sortByPrice(brands[brandNames[i]]);
+}
+console.log(brands);
+
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
