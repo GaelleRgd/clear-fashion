@@ -95,6 +95,25 @@ console.log(sortedMarketplace);
 // 2. Create a variable and assign it the list of products by date from recent to old
 // 3. Log the variable
 
+function sortByDate(table){ //Tri à bulles 
+  var tab = table.slice();
+  var changed;
+  do{
+    changed = false;
+    for(let i = 0; i < tab.length-1; i++){
+      if(tab[i].date > tab[i+1].date){
+        var tmp = tab[i];
+        tab[i] = tab[i+1];
+        tab[i+1] = tmp; 
+        changed = true; 
+      }
+    }
+  }while(changed);
+  return(tab);
+}
+var sortedByDateMarketplace = sortByDate(marketplace);
+console.log(sortedByDateMarketplace);
+
 
 // 🎯 TODO: Filter a specific price range
 // 1. Filter the list of products between 50€ and 100€
