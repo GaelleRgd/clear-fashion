@@ -134,7 +134,11 @@ console.log(filteredMarketplace);
 // 1. Determine the average basket of the marketplace
 // 2. Log the average
 
-
+let sum = 0;
+for(let i = 0; i < marketplace.length; i++){
+  sum = sum + marketplace[i].price; 
+}
+console.log(sum / marketplace.length);
 
 
 
