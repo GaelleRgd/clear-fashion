@@ -165,6 +165,14 @@ console.log(sum / marketplace.length);
 // 2. Log the variable
 // 3. Log the number of products by brands
 
+const brands = {};
+for(let i = 0; i < brandNames.length; i++){
+  brands[brandNames[i]] = []; 
+}
+for(let j = 0; j < marketplace.length; j++){
+  brands[marketplace[j].brand].push(marketplace[j]);
+}
+console.log(brands);
 
 // 🎯 TODO: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
