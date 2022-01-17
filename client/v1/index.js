@@ -119,6 +119,16 @@ console.log(sortedByDateMarketplace);
 // 1. Filter the list of products between 50€ and 100€
 // 2. Log the list
 
+var filteredMarketplace = [];
+let i = 0;
+do{
+  i = i + 1; 
+}while(sortedMarketplace[i].price<50)
+do{
+  filteredMarketplace.push(sortedMarketplace[i]);
+  i = i + 1;
+}while(sortedMarketplace[i].price<100)
+console.log(filteredMarketplace);
 
 // 🎯 TODO: Average Basket
 // 1. Determine the average basket of the marketplace
