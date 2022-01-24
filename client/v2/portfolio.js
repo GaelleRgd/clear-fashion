@@ -5,7 +5,7 @@
 let currentProducts = [];
 let currentPagination = {};
 
-// inititiqte selectors
+// initiate selectors
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
@@ -115,6 +115,14 @@ selectShow.addEventListener('change', event => {
     .then(setCurrentProducts)
     .then(() => render(currentProducts, currentPagination));
 });
+
+// Feature 1 - Browse pages
+selectPage.addEventListener('change', event => {
+  console.log(currentPagination), 
+  fetchProducts(parseInt(event.target.value), currentPagination.pageSize)
+  .then(setCurrentProducts)
+  .then(() => render(currentProducts, currentPagination)); 
+}); 
 
 document.addEventListener('DOMContentLoaded', () =>
   fetchProducts()
