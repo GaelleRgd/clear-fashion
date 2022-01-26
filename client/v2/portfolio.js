@@ -8,6 +8,7 @@ let currentPagination = {};
 // initiate selectors
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
+const selectBrand = document.querySelector('#brand-select'); 
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 
@@ -38,6 +39,7 @@ const fetchProducts = async (page = 1, size = 12) => {
       console.error(body);
       return {currentProducts, currentPagination};
     }
+    console.log(body.data)
 
     return body.data;
   } catch (error) {
@@ -45,6 +47,32 @@ const fetchProducts = async (page = 1, size = 12) => {
     return {currentProducts, currentPagination};
   }
 };
+
+var brandNames = []
+const getBrands = async (totalNbProducts) => {
+  try {
+    const response = await fetch(
+      `https://clear-fashion-api.vercel.app?page=1&size=${totalNbProducts}`
+    );
+    const body = await response.json();
+
+    if (body.success !== true) {
+      console.error(body);
+      return {currentProducts, currentPagination};
+    }
+    console.log(body.data)
+
+    for(let i = 0; i < body.data.result.length; i++){
+      brandNames.push(body.data.result[i].brand)
+    }
+    brandNames = [ ... new Set(brandNames)] //Transform the array into a set to suppress duplicates 
+    return brandNames
+  } catch (error) {
+    console.error(error);
+    return {currentProducts, currentPagination};
+  }
+}
+console.log(getBrands(139))
 
 /**
  * Render list of products
@@ -88,6 +116,19 @@ const renderPagination = pagination => {
 
 /**
  * Render page selector
+ * @param {Array} brandNames 
+ */
+const renderBrandNames = brandNames => {
+  const options = Array.from(
+    brandNames, 
+    (value, index) => `<option value="${index + 1}">${value}</option>`
+  ).join('');
+  console.log(options)
+  selectBrand.innerHTML = options;
+}
+
+/**
+ * Render page selector
  * @param  {Object} pagination
  */
 const renderIndicators = pagination => {
@@ -97,8 +138,10 @@ const renderIndicators = pagination => {
 };
 
 const render = (products, pagination) => {
+  console.log(brandNames)
   renderProducts(products);
   renderPagination(pagination);
+  renderBrandNames(brandNames);
   renderIndicators(pagination);
 };
 
@@ -118,11 +161,16 @@ selectShow.addEventListener('change', event => {
 
 // Feature 1 - Browse pages
 selectPage.addEventListener('change', event => {
-  console.log(currentPagination), 
   fetchProducts(parseInt(event.target.value), currentPagination.pageSize)
   .then(setCurrentProducts)
   .then(() => render(currentProducts, currentPagination)); 
 }); 
+
+// Feature 2 - Filter by brands
+selectBrand.addEventListener('change', event => {
+  console.log("Hello brand")
+})
+
 
 document.addEventListener('DOMContentLoaded', () =>
   fetchProducts()
