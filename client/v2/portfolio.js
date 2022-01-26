@@ -4,6 +4,7 @@
 // current products on the page
 let currentProducts = [];
 let currentPagination = {};
+let selectedBrand = "select"
 
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
@@ -133,6 +134,7 @@ const renderBrandNames = brandNames => {
     (value, index) => `<option value="${value}">${value}</option>`
   ).join('');
   selectBrand.innerHTML = options;
+  selectBrand.selectedIndex = brandNames.indexOf(selectedBrand)+1; //We display the selected brand in the selector
 }
 /**
  * Render page selector
@@ -144,6 +146,7 @@ const renderIndicators = pagination => {
 };
 
 const render = (products, pagination) => {
+  console.log(pagination);
   renderProducts(products);
   renderPagination(pagination);
   renderBrandNames(brandNames);
@@ -176,13 +179,20 @@ selectBrand.addEventListener('change', event => {
   var selectedMeta = {}
   fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
     selectedMeta = result.meta //Get the metadata of the current page
-    for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
-      if(result.result[i].brand == event.target.value){ //If a product is from the selected brand ...
-        selectedProducts.push(result.result[i]) //... Add it to the list of products that will be displayed
-      }
+    selectedBrand = event.target.value //Update the currently selected brand
+    if(selectedBrand == "select"){ //If the user wants to supress the brand selection
+      setCurrentProducts({result : result.result, meta : selectedMeta});
+      render(currentProducts,currentPagination);
     }
-    setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
-    render(currentProducts, currentPagination); //Render the page with the new data
+    else{
+      for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
+        if(result.result[i].brand == event.target.value){ //If a product is from the selected brand ...
+          selectedProducts.push(result.result[i]) //... Add it to the list of products that will be displayed
+        }
+      }
+      setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
+      render(currentProducts, currentPagination); //Render the page with the new data
+    }
   })
 })
 
