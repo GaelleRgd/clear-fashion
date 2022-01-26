@@ -5,11 +5,7 @@
 let currentProducts = [];
 let currentPagination = {};
 
-<<<<<<< HEAD
-// initiate selectors
-=======
 // instantiate the selectors
->>>>>>> 22aaa04fe745ab34e6cd99c453640d670cfb4762
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const selectBrand = document.querySelector('#brand-select'); 
@@ -22,6 +18,7 @@ const spanNbProducts = document.querySelector('#nbProducts');
  * @param {Object} meta - pagination meta info
  */
 const setCurrentProducts = ({result, meta}) => {
+  console.log('Set Current Products')
   currentProducts = result;
   currentPagination = meta;
 };
@@ -33,6 +30,7 @@ const setCurrentProducts = ({result, meta}) => {
  * @return {Object}
  */
 const fetchProducts = async (page = 1, size = 12) => {
+  console.log('Fetch Products')
   try {
     const response = await fetch(
       `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
@@ -51,6 +49,10 @@ const fetchProducts = async (page = 1, size = 12) => {
     return {currentProducts, currentPagination};
   }
 };
+
+function pause(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 var brandNames = []
 const getBrands = async (totalNbProducts) => {
@@ -76,6 +78,8 @@ const getBrands = async (totalNbProducts) => {
     return {currentProducts, currentPagination};
   }
 }
+
+pause(1000) //We need to wait because of the asynchronus functions.
 console.log(getBrands(139))
 
 /**
@@ -113,7 +117,7 @@ const renderPagination = pagination => {
     {'length': pageCount},
     (value, index) => `<option value="${index + 1}">${index + 1}</option>`
   ).join('');
-
+  
   selectPage.innerHTML = options;
   selectPage.selectedIndex = currentPage - 1;
 };
@@ -123,26 +127,23 @@ const renderPagination = pagination => {
  * @param {Array} brandNames 
  */
 const renderBrandNames = brandNames => {
-  const options = Array.from(
+  var options = `<option value="select">select</option>` //We use a default selection for when no brand is selected
+  options += Array.from(
     brandNames, 
-    (value, index) => `<option value="${index + 1}">${value}</option>`
+    (value, index) => `<option value="${value}">${value}</option>`
   ).join('');
-  console.log(options)
   selectBrand.innerHTML = options;
 }
-
 /**
  * Render page selector
  * @param  {Object} pagination
  */
 const renderIndicators = pagination => {
   const {count} = pagination;
-
   spanNbProducts.innerHTML = count;
 };
 
 const render = (products, pagination) => {
-  console.log(brandNames)
   renderProducts(products);
   renderPagination(pagination);
   renderBrandNames(brandNames);
@@ -158,12 +159,10 @@ const render = (products, pagination) => {
  */
 selectShow.addEventListener('change', async (event) => {
   const products = await fetchProducts(currentPagination.currentPage, parseInt(event.target.value));
-
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
 
-<<<<<<< HEAD
 // Feature 1 - Browse pages
 selectPage.addEventListener('change', event => {
   fetchProducts(parseInt(event.target.value), currentPagination.pageSize)
@@ -173,20 +172,24 @@ selectPage.addEventListener('change', event => {
 
 // Feature 2 - Filter by brands
 selectBrand.addEventListener('change', event => {
-  console.log("Hello brand")
+  var selectedProducts = []
+  var selectedMeta = {}
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
+    selectedMeta = result.meta //Get the metadata of the current page
+    for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
+      if(result.result[i].brand == event.target.value){ //If a product is from the selected brand ...
+        selectedProducts.push(result.result[i]) //... Add it to the list of products that will be displayed
+      }
+    }
+    setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
+    render(currentProducts, currentPagination); //Render the page with the new data
+  })
 })
 
 
-document.addEventListener('DOMContentLoaded', () =>
-  fetchProducts()
-    .then(setCurrentProducts)
-    .then(() => render(currentProducts, currentPagination))
-);
-=======
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
-
+  console.log(products)
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
->>>>>>> 22aaa04fe745ab34e6cd99c453640d670cfb4762
