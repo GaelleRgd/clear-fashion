@@ -1,0 +1,56 @@
+body {
+    background-color: rgb(243, 244, 245);
+    color : navy; 
+}
+  
+h1 {
+    color: #1c76a0;
+    text-align: center;
+    font-size: 32px; 
+}
+
+h2 {
+    color: #1c76a0;
+    text-align: center;
+    font-size: 26;
+}
+
+button {
+    background-color: #1c76a0;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#options{
+    overflow: hidden;
+    background-color: rgb(175, 207, 245);
+}
+
+#options div {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+#indicators{
+    overflow: hidden;
+    background-color: rgb(143, 187, 238);
+}
+
+#indicators div {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 22px;
+  }
