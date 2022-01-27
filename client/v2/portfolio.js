@@ -12,6 +12,9 @@ const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const selectBrand = document.querySelector('#brand-select'); 
 const selectSort = document.querySelector('#sort-select');
+const reasonablePrice = document.querySelector('#reasonable-price');
+const recentlyReleased = document.querySelector('#recently-released'); 
+const resetFilters = document.querySelector('#reset-filters');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 
@@ -198,6 +201,38 @@ selectBrand.addEventListener('change', event => {
   })
 })
 
+// Feature 3 - Filter by recent products 
+recentlyReleased.addEventListener('click', () =>{
+  let selectedProducts = []
+  let twoWeeksAgo = new Date(Date.now() - 12096e5); //12096e5 is two weeks in miliseconds
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
+    for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
+      let d = new Date(result.result[i].released)
+      if(d.getTime() > twoWeeksAgo.getTime()){ selectedProducts.push(result.result[i]) }
+    }
+    setCurrentProducts({result : selectedProducts, meta : result.meta}); //Reset the page data
+    render(currentProducts, currentPagination); //Render the page with the new data
+  })
+})
+
+// Feature 4 - Filter by reasonable price 
+reasonablePrice.addEventListener('click', () => {
+  let selectedProducts = []
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
+    for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
+      if(result.result[i].price <= 50){ selectedProducts.push(result.result[i]) }
+    }
+    setCurrentProducts({result : selectedProducts, meta : result.meta}); //Reset the page data
+    render(currentProducts, currentPagination); //Render the page with the new data
+  })
+})
+
+resetFilters.addEventListener('click', async () => {
+  const products = await fetchProducts();
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+})
+
 selectSort.addEventListener('change', event => {
   let selectedProducts = []
   let selectedMeta = {}
@@ -212,15 +247,11 @@ selectSort.addEventListener('change', event => {
     else{
       let twoWeeksAgo = new Date(Date.now() - 12096e5); //12096e5 is two weeks in miliseconds
       if(selectedSort == "date-asc"){
-        for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
-          let d = new Date(result.result[i].released)
-          console.log(result.result[i].released)
-          if(d.getTime() > twoWeeksAgo.getTime()){ selectedProducts.push(result.result[i]) }
-        }
+        
       }
       if(selectedSort == "price-asc"){
         for(let i = 0; i < result.result.length; i++){
-          if(result.result[i].price <= 50){ selectedProducts.push(result.result[i]) }
+          
         }
       }
       console.log(selectedProducts)
@@ -234,7 +265,6 @@ selectSort.addEventListener('change', event => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
-  console.log(products)
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
