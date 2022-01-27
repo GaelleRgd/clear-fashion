@@ -122,6 +122,40 @@ function sortByPriceDesc(table){ //Tri à bulles
   return(tab);
 }
 
+function sortByDateAsc(table){ //Tri à bulles 
+  var tab = table.slice();
+  var changed;
+  do{
+    changed = false;
+    for(let i = 0; i < tab.length-1; i++){
+      if(tab[i].released < tab[i+1].released){
+        var tmp = tab[i];
+        tab[i] = tab[i+1];
+        tab[i+1] = tmp; 
+        changed = true; 
+      }
+    }
+  }while(changed);
+  return(tab);
+}
+
+function sortByDateDesc(table){ //Tri à bulles 
+  var tab = table.slice();
+  var changed;
+  do{
+    changed = false;
+    for(let i = 0; i < tab.length-1; i++){
+      if(tab[i].released > tab[i+1].released){
+        var tmp = tab[i];
+        tab[i] = tab[i+1];
+        tab[i+1] = tmp; 
+        changed = true; 
+      }
+    }
+  }while(changed);
+  return(tab);
+}
+
 /**
  * Render list of products
  * @param  {Array} products
@@ -271,7 +305,6 @@ selectSort.addEventListener('change', event => {
   let selectedProducts = []
   let selectedMeta = {}
   selectedSort = event.target.value;
-  console.log(selectedSort);
   fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
     selectedMeta = result.meta //Get the metadata of the current page
     if(selectedSort == "select"){ //If the user wants to supress the brand selection
@@ -279,9 +312,11 @@ selectSort.addEventListener('change', event => {
       render(currentProducts,currentPagination);
     }
     else{
-      let twoWeeksAgo = new Date(Date.now() - 12096e5); //12096e5 is two weeks in miliseconds
       if(selectedSort == "date-asc"){
-        
+        selectedProducts = sortByDateAsc(result.result)
+      }
+      if(selectedSort == "date-desc"){
+        selectedProducts = sortByDateDesc(result.result)
       }
       if(selectedSort == "price-asc"){ // Feature 5 - Sort by price (ascending)
         selectedProducts = sortByPriceAsc(result.result)
@@ -289,7 +324,6 @@ selectSort.addEventListener('change', event => {
       if(selectedSort == "price-desc"){
         selectedProducts = sortByPriceDesc(result.result)
       }
-      console.log(selectedProducts)
       setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
       render(currentProducts, currentPagination); //Render the page with the new data
     }
