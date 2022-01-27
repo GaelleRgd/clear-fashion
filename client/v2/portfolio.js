@@ -217,10 +217,15 @@ selectSort.addEventListener('change', event => {
           console.log(result.result[i].released)
           if(d.getTime() > twoWeeksAgo.getTime()){ selectedProducts.push(result.result[i]) }
         }
-        console.log(selectedProducts)
-        setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
-        render(currentProducts, currentPagination); //Render the page with the new data
       }
+      if(selectedSort == "price-asc"){
+        for(let i = 0; i < result.result.length; i++){
+          if(result.result[i].price <= 50){ selectedProducts.push(result.result[i]) }
+        }
+      }
+      console.log(selectedProducts)
+      setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
+      render(currentProducts, currentPagination); //Render the page with the new data
     }
   })
 
