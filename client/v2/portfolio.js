@@ -21,6 +21,7 @@ const spanNbNewProducts = document.querySelector('#nbNewProducts');
 const p50Indicator = document.querySelector('#p50-indicator');
 const p90Indicator = document.querySelector('#p90-indicator');
 const p95Indicator = document.querySelector('#p95-indicator');
+const lastReleaseIndicator = document.querySelector('#last-release');
 
 /**
  * Set global value
@@ -221,14 +222,18 @@ const renderIndicators = async pagination => {
   spanNbProducts.innerHTML = count;
 
   // Feature 9 - Number of recent products indicator
+  // Feature 11 - Last released date indicator
   let countNew = 0;
+  let mostRecentDate = new Date("2020-01-01");
   let twoWeeksAgo = new Date(Date.now() - 12096e5);
   const products = await fetchProducts(1, count); 
   products.result.forEach(elmt => {
     let d = new Date(elmt.released)
     if(d.getTime() > twoWeeksAgo.getTime()){ countNew = countNew + 1 }
+    if(d.getTime() > mostRecentDate){ mostRecentDate = d }
   })
   spanNbNewProducts.innerHTML = countNew; 
+  lastReleaseIndicator.innerHTML = mostRecentDate.toLocaleDateString(); 
   
   // Feature 10 - p50, p90 and p95 price value indicator
   let sortedProducts = sortByPriceAsc(products.result);
