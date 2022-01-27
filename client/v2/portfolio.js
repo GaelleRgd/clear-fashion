@@ -88,6 +88,40 @@ const getBrands = async (totalNbProducts) => {
 pause(1000) //We need to wait because of the asynchronus functions.
 console.log(getBrands(139))
 
+function sortByPriceAsc(table){ //Tri à bulles 
+  var tab = table.slice();
+  var changed;
+  do{
+    changed = false;
+    for(let i = 0; i < tab.length-1; i++){
+      if(tab[i].price > tab[i+1].price){
+        var tmp = tab[i];
+        tab[i] = tab[i+1];
+        tab[i+1] = tmp; 
+        changed = true; 
+      }
+    }
+  }while(changed);
+  return(tab);
+}
+
+function sortByPriceDesc(table){ //Tri à bulles 
+  var tab = table.slice();
+  var changed;
+  do{
+    changed = false;
+    for(let i = 0; i < tab.length-1; i++){
+      if(tab[i].price < tab[i+1].price){
+        var tmp = tab[i];
+        tab[i] = tab[i+1];
+        tab[i+1] = tmp; 
+        changed = true; 
+      }
+    }
+  }while(changed);
+  return(tab);
+}
+
 /**
  * Render list of products
  * @param  {Array} products
@@ -249,10 +283,11 @@ selectSort.addEventListener('change', event => {
       if(selectedSort == "date-asc"){
         
       }
-      if(selectedSort == "price-asc"){
-        for(let i = 0; i < result.result.length; i++){
-          
-        }
+      if(selectedSort == "price-asc"){ // Feature 5 - Sort by price (ascending)
+        selectedProducts = sortByPriceAsc(result.result)
+      }
+      if(selectedSort == "price-desc"){
+        selectedProducts = sortByPriceDesc(result.result)
       }
       console.log(selectedProducts)
       setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
