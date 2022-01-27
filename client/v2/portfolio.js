@@ -15,6 +15,7 @@ const selectBrand = document.querySelector('#brand-select');
 const selectSort = document.querySelector('#sort-select');
 const reasonablePrice = document.querySelector('#reasonable-price');
 const recentlyReleased = document.querySelector('#recently-released'); 
+const favoriteProducts = document.querySelector('#fav-products');
 const resetFilters = document.querySelector('#reset-filters');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
@@ -52,7 +53,6 @@ const fetchProducts = async (page = 1, size = 12) => {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-    console.log(body.data)
 
     return body.data;
   } catch (error) {
@@ -328,6 +328,17 @@ reasonablePrice.addEventListener('click', () => {
     setCurrentProducts({result : selectedProducts, meta : result.meta}); //Reset the page data
     render(currentProducts, currentPagination); //Render the page with the new data
   })
+})
+
+// Feature 14 - Filter by favorite
+favoriteProducts.addEventListener('click', async () => {
+  let favProducts = [];
+  const products = await fetchProducts(1, 139); 
+  products.result.forEach(elmt => {
+    if(favProductsID.includes(elmt.uuid)){ favProducts.push(elmt) }
+  })
+  setCurrentProducts({result : favProducts, meta : products.meta}); //Reset the page data
+  render(currentProducts, currentPagination); //Render the page with the new data
 })
 
 resetFilters.addEventListener('click', async () => {
