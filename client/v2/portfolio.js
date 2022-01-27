@@ -18,6 +18,9 @@ const resetFilters = document.querySelector('#reset-filters');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 const spanNbNewProducts = document.querySelector('#nbNewProducts'); 
+const p50Indicator = document.querySelector('#p50-indicator');
+const p90Indicator = document.querySelector('#p90-indicator');
+const p95Indicator = document.querySelector('#p95-indicator');
 
 /**
  * Set global value
@@ -226,6 +229,12 @@ const renderIndicators = async pagination => {
     if(d.getTime() > twoWeeksAgo.getTime()){ countNew = countNew + 1 }
   })
   spanNbNewProducts.innerHTML = countNew; 
+  
+  // Feature 10 - p50, p90 and p95 price value indicator
+  let sortedProducts = sortByPriceAsc(products.result);
+  p50Indicator.innerHTML = sortedProducts[Math.round(count*0.5)].price;
+  p90Indicator.innerHTML = sortedProducts[Math.round(count*0.9)].price;
+  p95Indicator.innerHTML = sortedProducts[Math.round(count*0.95)].price;
 };
 
 const render = (products, pagination) => {
