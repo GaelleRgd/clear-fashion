@@ -17,6 +17,7 @@ const recentlyReleased = document.querySelector('#recently-released');
 const resetFilters = document.querySelector('#reset-filters');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
+const spanNbNewProducts = document.querySelector('#nbNewProducts'); 
 
 /**
  * Set global value
@@ -24,7 +25,6 @@ const spanNbProducts = document.querySelector('#nbProducts');
  * @param {Object} meta - pagination meta info
  */
 const setCurrentProducts = ({result, meta}) => {
-  console.log('Set Current Products')
   currentProducts = result;
   currentPagination = meta;
 };
@@ -213,9 +213,19 @@ const renderBrandNames = brandNames => {
  * Render page selector
  * @param  {Object} pagination
  */
-const renderIndicators = pagination => {
+const renderIndicators = async pagination => {
   const {count} = pagination;
   spanNbProducts.innerHTML = count;
+
+  // Feature 9 - Number of recent products indicator
+  let countNew = 0;
+  let twoWeeksAgo = new Date(Date.now() - 12096e5);
+  const products = await fetchProducts(1, count); 
+  products.result.forEach(elmt => {
+    let d = new Date(elmt.released)
+    if(d.getTime() > twoWeeksAgo.getTime()){ countNew = countNew + 1 }
+  })
+  spanNbNewProducts.innerHTML = countNew; 
 };
 
 const render = (products, pagination) => {
