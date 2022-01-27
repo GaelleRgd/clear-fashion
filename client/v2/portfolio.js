@@ -4,6 +4,7 @@
 // current products on the page
 let currentProducts = [];
 let currentPagination = {};
+let favProductsID = [];
 let selectedBrand = "select"; 
 let selectedSort = "select";
 
@@ -23,6 +24,7 @@ const p90Indicator = document.querySelector('#p90-indicator');
 const p95Indicator = document.querySelector('#p95-indicator');
 const lastReleaseIndicator = document.querySelector('#last-release');
 
+
 /**
  * Set global value
  * @param {Array} result - products to display
@@ -40,7 +42,6 @@ const setCurrentProducts = ({result, meta}) => {
  * @return {Object}
  */
 const fetchProducts = async (page = 1, size = 12) => {
-  console.log('Fetch Products')
   try {
     const response = await fetch(
       `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
@@ -183,7 +184,18 @@ const renderProducts = products => {
   fragment.appendChild(div);
   sectionProducts.innerHTML = '<h2>Products</h2>';
   sectionProducts.appendChild(fragment);
+  
+  // Feature 13 - Save as favorite
+  let presentedProducts = document.querySelectorAll('.product');
+  let presentedProductsArray = Array.prototype.slice.call(presentedProducts);
+  presentedProductsArray.forEach(function(elem){
+    elem.addEventListener("click", function(){
+      favProductsID.push(elem.id)
+      this.style.backgroundColor = "#ff0";
+    });
+  });
 };
+
 
 /**
  * Render page selector
@@ -243,7 +255,6 @@ const renderIndicators = async pagination => {
 };
 
 const render = (products, pagination) => {
-  console.log(pagination);
   renderProducts(products);
   renderPagination(pagination);
   renderBrandNames(brandNames);
