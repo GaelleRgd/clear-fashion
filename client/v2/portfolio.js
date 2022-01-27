@@ -4,12 +4,14 @@
 // current products on the page
 let currentProducts = [];
 let currentPagination = {};
-let selectedBrand = "select"
+let selectedBrand = "select"; 
+let selectedSort = "select";
 
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const selectBrand = document.querySelector('#brand-select'); 
+const selectSort = document.querySelector('#sort-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 
@@ -128,7 +130,7 @@ const renderPagination = pagination => {
  * @param {Array} brandNames 
  */
 const renderBrandNames = brandNames => {
-  var options = `<option value="select">select</option>` //We use a default selection for when no brand is selected
+  var options = `<option value="select">Select</option>` //We use a default selection for when no brand is selected
   options += Array.from(
     brandNames, 
     (value, index) => `<option value="${value}">${value}</option>`
@@ -194,6 +196,34 @@ selectBrand.addEventListener('change', event => {
       render(currentProducts, currentPagination); //Render the page with the new data
     }
   })
+})
+
+selectSort.addEventListener('change', event => {
+  let selectedProducts = []
+  let selectedMeta = {}
+  selectedSort = event.target.value;
+  console.log(selectedSort);
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
+    selectedMeta = result.meta //Get the metadata of the current page
+    if(selectedSort == "select"){ //If the user wants to supress the brand selection
+      setCurrentProducts({result : result.result, meta : selectedMeta});
+      render(currentProducts,currentPagination);
+    }
+    else{
+      let twoWeeksAgo = new Date(Date.now() - 12096e5); //12096e5 is two weeks in miliseconds
+      if(selectedSort == "date-asc"){
+        for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
+          let d = new Date(result.result[i].released)
+          console.log(result.result[i].released)
+          if(d.getTime() > twoWeeksAgo.getTime()){ selectedProducts.push(result.result[i]) }
+        }
+        console.log(selectedProducts)
+        setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
+        render(currentProducts, currentPagination); //Render the page with the new data
+      }
+    }
+  })
+
 })
 
 
