@@ -57,6 +57,20 @@ async function findProductsUnderPrice(maxPrice){
     console.log(products);
 }
 
+async function sortProductsByPrice(){
+    // Connection to the data base
+    const client = await MongoClient.connect(url, connectionParams);
+    console.log('Connected to database')
+    const db = client.db(db_name)
+
+    // Get requested products 
+    const collection = db.collection('products');
+    const products = await collection.aggregate([{$sort:{"price":1}}]).toArray();
+  
+    console.log(products);
+}
+
 //insertProductsInDataBase()
 //findProductsByBrand("MONTLIMART")
-findProductsUnderPrice(50)
+//findProductsUnderPrice(50)
+sortProductsByPrice()
