@@ -9,29 +9,22 @@ const cheerio = require('cheerio');
 const parse = data => {
   const $ = cheerio.load(data);
 
-  return $('.productList-container .productList')
+  return $('.products-grid .product-info')
     .map((i, element) => {
       const name = $(element)
-        .find('.productList-title')
+        .find('.product-name')
         .text()
         .trim()
         .replace(/\s/g, ' ');
       const price = parseFloat(
         $(element)
-          .find('.productList-price')
+          .find('.regular-price')
           .text()
       );
-      /*
-      const link = $(element)
-        .find('a.productList-link')  
-      const image = $(element)
-      .find('.productList-image')
-      console.log(image)*/
-
       return {name, price};
     })
     .get();
-}; 
+};
 
 /**
  * Scrape all the products for a given url page
@@ -40,23 +33,13 @@ const parse = data => {
  */
 module.exports.scrape = async url => {
   try {
-    let body = "";
+    const response = await fetch(url);
 
-    // Fetch the first page
-    let response = await fetch(url);
     if (response.ok) {
-      body = await response.text();
+      const body = await response.text();
+      return parse(body);
     }
-/*
-    // Fetch the following pages to get all the products
-    for(let i = 2; i < 11; i++){
-      response = await fetch(url + "#page=" + i);
-      if (response.ok) {
-        body = body + await response.text();
-      }
-    }
-    */
-    return parse(body);
+
     console.error(response);
 
     return null;
