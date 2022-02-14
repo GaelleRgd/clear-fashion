@@ -13,7 +13,7 @@ const Dedicated_products = require('./Dedicated_products.json')
 
 const all_products = [Montlimart_products, AdresseParis_products, Dedicated_products]
 
-async function connect(){
+async function insertProductsInDataBase(){
     try{
         // Connection to the data base
         const client = await MongoClient.connect(url, connectionParams);
@@ -31,4 +31,18 @@ async function connect(){
     }
 }
 
-connect() 
+async function findProductsByBrand(brand){
+    // Connection to the data base
+    const client = await MongoClient.connect(url, connectionParams);
+    console.log('Connected to database')
+    const db = client.db(db_name)
+
+    // Get requested products 
+    const collection = db.collection('products');
+    const products = await collection.find({brand}).toArray();
+  
+    console.log(products);
+}
+
+//insertProductsInDataBase()
+findProductsByBrand("MONTLIMART")
