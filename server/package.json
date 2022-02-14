@@ -11,6 +11,7 @@
     "express": "^4.17.2",
     "helmet": "^5.0.1",
     "mongodb": "^4.3.0",
+    "mongoose": "^6.2.1",
     "node-fetch": "2.6.6",
     "parse-domain": "^4.1.0",
     "require-all": "^3.0.0",
