@@ -1,17 +1,1 @@
-[
-    {"name":"CEINTURE KILOMETRE","price":49},
-    {"name":"CHEMISE SAINT PAUL","price":150},
-    {"name":"PULL DAMIER","price":135},
-    {"name":"BASKETS IMPACT","price":149},
-    {"name":"PULL DAMIER","price":135},
-    {"name":"CHEMISE MONTLIMART","price":95},
-    {"name":"PULL ORIGINE","price":135},
-    {"name":"CHAUSSETTES COFFRET MONTLISOCKS","price":42},
-    {"name":"CHAUSSETTES COFFRET MONTLISOCKS","price":42},
-    {"name":"PULL ORIGINE","price":135},
-    {"name":"BOOTS MONTPLUIE","price":85},
-    {"name":"PULL VERITABLE","price":130},
-    {"name":"CHEMISE SURTOUT","price":100},
-    {"name":"BASKETS IMPACT","price":149},
-    {"name":"BOOTS MONTPLUIE","price":85}
-]
+[{"brand":"MONTLIMART","name":"CEINTURE KILOMETRE","price":49},{"brand":"MONTLIMART","name":"CHEMISE SAINT PAUL","price":150},{"brand":"MONTLIMART","name":"PULL DAMIER","price":135},{"brand":"MONTLIMART","name":"BASKETS IMPACT","price":149},{"brand":"MONTLIMART","name":"PULL DAMIER","price":135},{"brand":"MONTLIMART","name":"CHEMISE MONTLIMART","price":95},{"brand":"MONTLIMART","name":"PULL ORIGINE","price":135},{"brand":"MONTLIMART","name":"CHAUSSETTES COFFRET MONTLISOCKS","price":42},{"brand":"MONTLIMART","name":"CHAUSSETTES COFFRET MONTLISOCKS","price":42},{"brand":"MONTLIMART","name":"PULL ORIGINE","price":135},{"brand":"MONTLIMART","name":"BOOTS MONTPLUIE","price":85},{"brand":"MONTLIMART","name":"PULL VERITABLE","price":130},{"brand":"MONTLIMART","name":"CHEMISE SURTOUT","price":100},{"brand":"MONTLIMART","name":"BASKETS IMPACT","price":149},{"brand":"MONTLIMART","name":"BOOTS MONTPLUIE","price":85}]

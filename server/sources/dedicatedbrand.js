@@ -28,7 +28,7 @@ const parse = data => {
       .find('.productList-image')
       console.log(image)*/
 
-      return {name, price};
+      return {"brand":"DEDICATED", name, price};
     })
     .get();
 }; 

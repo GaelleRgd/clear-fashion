@@ -21,7 +21,7 @@ const parse = data => {
           .find('.product-price')
           .text()
       );
-      return {name, price};
+      return {"brand":"ADRESSEPARIS", name, price};
     })
     .get();
 };
