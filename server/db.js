@@ -9,11 +9,12 @@ const connectionParams = {
 
 const Montlimart_products = require('./Montlimart_products.json')
 const AdresseParis_products = require('./AdresseParis_products.json')
-const Dedicated_products = require('./Dedicated_products.json')
+const Dedicated_products = require('./Dedicated_products.json');
+const { ObjectId } = require('mongodb');
 
 const all_products = [Montlimart_products, AdresseParis_products, Dedicated_products]
 
-async function insertProductsInDataBase(){
+module.exports.insertProductsInDataBase = async () => {
     try{
         // Connection to the data base
         const client = await MongoClient.connect(url, connectionParams);
@@ -31,7 +32,7 @@ async function insertProductsInDataBase(){
     }
 }
 
-async function findProductsByBrand(brand){
+module.exports.findProductsByBrand = async brand =>{
     // Connection to the data base
     const client = await MongoClient.connect(url, connectionParams);
     console.log('Connected to database')
@@ -41,10 +42,25 @@ async function findProductsByBrand(brand){
     const collection = db.collection('products');
     const products = await collection.find({brand}).toArray();
   
+    // console.log(products);
+    return(products)
+}
+
+module.exports.findProductsByID = async id => {
+    // Connection to the data base
+    const client = await MongoClient.connect(url, connectionParams);
+    console.log('Connected to database')
+    const db = client.db(db_name)
+
+    // Get requested products 
+    const collection = db.collection('products');
+    const products = await collection.find({"_id":ObjectId(id)}).toArray();
+  
     console.log(products);
 }
 
-async function findProductsUnderPrice(maxPrice){
+
+module.exports.findProductsUnderPrice = async maxPrice => {
     // Connection to the data base
     const client = await MongoClient.connect(url, connectionParams);
     console.log('Connected to database')
@@ -57,7 +73,7 @@ async function findProductsUnderPrice(maxPrice){
     console.log(products);
 }
 
-async function sortProductsByPrice(){
+module.exports.sortProductsByPrice = async () => {
     // Connection to the data base
     const client = await MongoClient.connect(url, connectionParams);
     console.log('Connected to database')
@@ -70,7 +86,8 @@ async function sortProductsByPrice(){
     console.log(products);
 }
 
-//insertProductsInDataBase()
-//findProductsByBrand("MONTLIMART")
-//findProductsUnderPrice(50)
-sortProductsByPrice()
+// insertProductsInDataBase()
+// findProductsByBrand("MONTLIMART")
+// findProductsByID("620a5a987dc6b8eba1416d2f")
+// findProductsUnderPrice(50)
+// sortProductsByPrice()
