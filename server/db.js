@@ -56,7 +56,8 @@ module.exports.findProductsByID = async id => {
     const collection = db.collection('products');
     const products = await collection.find({"_id":ObjectId(id)}).toArray();
   
-    console.log(products);
+    // console.log(products);
+    return( products )
 }
 
 
@@ -70,7 +71,22 @@ module.exports.findProductsUnderPrice = async maxPrice => {
     const collection = db.collection('products');
     const products = await collection.find({"price":{$lt:maxPrice}}).toArray();
   
-    console.log(products);
+    // console.log(products);
+    return( products )
+}
+
+module.exports.findProductsByBrandAndPrice = async (brand, price) => {
+    // Connection to the data base
+    const client = await MongoClient.connect(url, connectionParams);
+    console.log('Connected to database')
+    const db = client.db(db_name)
+
+    // Get requested products 
+    const collection = db.collection('products');
+    const products = await collection.find({"brand":brand, "price":{$lt:price}}).toArray();
+  
+    // console.log(products);
+    return( products )
 }
 
 module.exports.sortProductsByPrice = async () => {

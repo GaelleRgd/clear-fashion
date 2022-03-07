@@ -22,6 +22,7 @@ app.get('/', (request, response) => {
 });
 
 app.get('/products',  async (request, response) => {
+  // Return all the products of the dataset 
   let montlimart = await db.findProductsByBrand("MONTLIMART")
   let dedicated = await db.findProductsByBrand("DEDICATED")
   let adresseparis = await db.findProductsByBrand("ADRESSEPARIS")
@@ -29,6 +30,21 @@ app.get('/products',  async (request, response) => {
   "DEDICATED" : dedicated, 
   "ADRESSEPARIS" : adresseparis
 })
+})
+
+app.get('/products/:id', async (request, response) => {
+  let product = await db.findProductsByID(request.params.id)
+  response.send({"_id":request.params.id, "Product":product})
+})
+
+app.get('/products/search', async (request, response) => {
+  console.log(request)
+  let products = await db.findProductsByBrandAndPrice("MONTLIMART", 60);
+  response.send({ 
+    "limit" : 12, 
+    "total" : products.length, 
+    "results" : products
+  })
 })
 
 app.listen(PORT);
