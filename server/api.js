@@ -31,21 +31,32 @@ app.get('/products',  async (request, response) => {
   "ADRESSEPARIS" : adresseparis
 })
 })
+app.get('/products/search', async (request, response) => {
+  console.log(request.query)
+
+  let limit = 12 
+  if(request.query.limit != undefined){limit = request.query.limit}
+
+  let brand = "all"
+  if(request.query.brand != undefined){brand = request.query.brand}
+
+  let price = 10000
+  if(request.query.price != undefined){price = parseFloat(request.query.price)}
+
+  let products = await db.findProductsByBrandAndPrice(brand, price);
+  response.send({ 
+    "limit" : limit, 
+    "total" : products.length, 
+    "results" : products.slice(0, limit)
+  })
+})
 
 app.get('/products/:id', async (request, response) => {
   let product = await db.findProductsByID(request.params.id)
-  response.send({"_id":request.params.id, "Product":product})
+  response.send({"_id":request.params.id, "product":product})
 })
 
-app.get('/products/search', async (request, response) => {
-  console.log(request)
-  let products = await db.findProductsByBrandAndPrice("MONTLIMART", 60);
-  response.send({ 
-    "limit" : 12, 
-    "total" : products.length, 
-    "results" : products
-  })
-})
+
 
 app.listen(PORT);
 
