@@ -22,14 +22,23 @@ app.get('/', (request, response) => {
 });
 
 app.get('/products',  async (request, response) => {
-  // Return all the products of the dataset 
-  let montlimart = await db.findProductsByBrand("MONTLIMART")
-  let dedicated = await db.findProductsByBrand("DEDICATED")
-  let adresseparis = await db.findProductsByBrand("ADRESSEPARIS")
-  response.send({"MONTLIMART" : montlimart, 
+  let page = 1
+  if(request.query.page != undefined){page = request.query.page}
+
+  let size = 12 
+  if(request.query.size != undefined){size = request.query.size}
+
+  let allProducts = await db.findAllProducts()
+  let products = allProducts.slice((page-1)*size, page*size)
+
+  response.send({"success":true,
+    "data": {"result" : products,
+      "meta" : {"currentPage":page,"pageCount":products.length,"pageSize":size,"count":allProducts.length}}}
+    /*
+    {"MONTLIMART" : montlimart, 
   "DEDICATED" : dedicated, 
-  "ADRESSEPARIS" : adresseparis
-})
+  "ADRESSEPARIS" : adresseparis*/
+)
 })
 app.get('/products/search', async (request, response) => {
   console.log(request.query)

@@ -45,9 +45,11 @@ const setCurrentProducts = ({result, meta}) => {
 const fetchProducts = async (page = 1, size = 12) => {
   try {
     const response = await fetch(
-      `https://server-iota-beige.vercel.app?page=${page}&size=${size}`
+      // `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
+      `https://server-iota-beige.vercel.app/products?pages=${page}&size=${size}`
     );
     const body = await response.json();
+    console.log(body.data)
 
     if (body.success !== true) {
       console.error(body);
@@ -60,6 +62,7 @@ const fetchProducts = async (page = 1, size = 12) => {
     return {currentProducts, currentPagination};
   }
 };
+
 
 function pause(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
