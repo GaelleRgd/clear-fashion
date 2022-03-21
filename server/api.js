@@ -1,4 +1,5 @@
 const cors = require('cors');
+const { query } = require('express');
 const express = require('express');
 const helmet = require('helmet');
 
@@ -32,40 +33,53 @@ app.get('/products',  async (request, response) => {
   let products = allProducts.slice((page-1)*size, page*size)
 
   response.send({"success":true,
-    "data": {"result" : products,
+    "data": {
+      "result" : products,
       "meta" : {"currentPage":page,"pageCount":products.length,"pageSize":size,"count":allProducts.length}}}
-    /*
-    {"MONTLIMART" : montlimart, 
-  "DEDICATED" : dedicated, 
-  "ADRESSEPARIS" : adresseparis*/
-)
-})
+)})
+
 app.get('/products/search', async (request, response) => {
-  console.log(request.query)
-
-  let limit = 12 
-  if(request.query.limit != undefined){limit = request.query.limit}
-
-  let brand = "all"
+  // Define parameters 
+  let limit = 12 // Maximal number of products by page
+  if(request.query.limit != undefined){limit = parseInt(request.query.limit)}
+  let brand = "all" // Brand of the products on the page
   if(request.query.brand != undefined){brand = request.query.brand}
-
-  let price = 10000
+  let price = 10000 // Maximal price of the products on the page
   if(request.query.price != undefined){price = parseFloat(request.query.price)}
+  let sort = 1 // Products will be sort by ascending (-1) or descending order (1)
+  if(request.query.sort != undefined){sort = parseInt(request.query.sort)}
+  let page = 1 // Page number 
+  if(request.query.page != undefined){page = parseInt(request.query.page)}
+  let start = limit*(page-1)
+  let end = limit*page
 
-  let products = await db.findProductsByBrandAndPrice(brand, price);
+  // Choose the query to db 
+  let db_query = {}
+  if(brand == "all"){db_query = [{$match : {"price" : {$lt: price}}},
+                                {$sort : {"price" : sort}}]}
+  else {db_query = [{$match : {"brand" : brand, "price" : {$lt: price}}},
+                    {$sort : {"price" : sort}}]}
+
+  // Request the database
+  let products = await db.findProductsByQuery(db_query);
+
+  // Send the response 
   response.send({ 
-    "limit" : limit, 
-    "total" : products.length, 
-    "results" : products.slice(0, limit)
+    "success" : true,
+    "data" : {
+      "limit" : limit, 
+      "page" : page,
+      "total" : products.length, 
+      "result" : products.slice(start, end),
+      "meta" : {"currentPage":page,"pageCount":products.length,"pageSize":limit,"count":139}
+    }
   })
-})
+}) 
 
 app.get('/products/:id', async (request, response) => {
   let product = await db.findProductsByID(request.params.id)
   response.send({"_id":request.params.id, "product":product})
 })
-
-
 
 app.listen(PORT);
 

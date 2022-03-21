@@ -2,11 +2,20 @@
 'use strict';
 
 // current products on the page
-let currentProducts = [];
-let currentPagination = {};
-let favProductsID = [];
+// let currentProducts = [];
+// let currentPagination = {};
+// let favProductsID = [];
 let selectedBrand = "select"; 
 let selectedSort = "select";
+
+let currentProducts = [];
+let favorite_list = [];
+let currentPagination = {};
+currentPagination.currentSize = 12;
+currentPagination.currentPage = 1; 
+let currentBrand = 'all';
+let currentMaxPrice = 10000;
+let currentSort = 1;
 
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
@@ -42,20 +51,18 @@ const setCurrentProducts = ({result, meta}) => {
  * @param  {Number}  [size=12] - size of the page
  * @return {Object}
  */
-const fetchProducts = async (page = 1, size = 12) => {
+const fetchProducts = async (limit = currentPagination.currentSize, brand = currentBrand, price = currentMaxPrice,
+  sort = currentSort, page = currentPagination.currentPage ) => {
   try {
     const response = await fetch(
       // `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
-      `https://server-iota-beige.vercel.app/products?pages=${page}&size=${size}`
+      `https://server-iota-beige.vercel.app/products/search?limit=${limit}&brand=${brand}&price=${price}&sort=${sort}&page=${page}`
     );
     const body = await response.json();
-    console.log(body.data)
-
     if (body.success !== true) {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-
     return body.data;
   } catch (error) {
     console.error(error);
@@ -64,24 +71,18 @@ const fetchProducts = async (page = 1, size = 12) => {
 };
 
 
-function pause(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 var brandNames = []
 const getBrands = async (totalNbProducts) => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=1&size=${totalNbProducts}`
+      // `https://clear-fashion-api.vercel.app?page=1&size=${totalNbProducts}`
+      `https://server-iota-beige.vercel.app/products/search?page=1&limit=${totalNbProducts}`
     );
     const body = await response.json();
-
     if (body.success !== true) {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-    console.log(body.data)
-
     for(let i = 0; i < body.data.result.length; i++){
       brandNames.push(body.data.result[i].brand)
     }
@@ -92,10 +93,9 @@ const getBrands = async (totalNbProducts) => {
     return {currentProducts, currentPagination};
   }
 }
+console.log(getBrands(182))
 
-pause(1000) //We need to wait because of the asynchronus functions.
-console.log(getBrands(139))
-
+///// Unused
 function sortByPriceAsc(table){ //Tri à bulles 
   var tab = table.slice();
   var changed;
@@ -163,6 +163,7 @@ function sortByDateDesc(table){ //Tri à bulles
   }while(changed);
   return(tab);
 }
+/////
 
 /**
  * Render list of products
@@ -174,7 +175,7 @@ const renderProducts = products => {
   const template = products
     .map(product => {
       return `
-      <div class="product" id=${product.uuid}>
+      <div class="product" id=${product._id}>
         <span>${product.brand}</span>
         <a href="${product.link}">${product.name}</a>
         <span>${product.price}</span>
@@ -198,7 +199,6 @@ const renderProducts = products => {
     });
   });
 };
-
 
 /**
  * Render page selector
@@ -257,11 +257,11 @@ const renderIndicators = async pagination => {
   p95Indicator.innerHTML = sortedProducts[Math.round(count*0.95)].price;
 };
 
-const render = (products, pagination) => {
+const render = (products) => {
   renderProducts(products);
-  renderPagination(pagination);
+  // renderPagination(pagination);
   renderBrandNames(brandNames);
-  renderIndicators(pagination);
+  // renderIndicators(pagination);
 };
 
 /**
@@ -271,24 +271,29 @@ const render = (products, pagination) => {
 /**
  * Select the number of products to display
  */
-selectShow.addEventListener('change', async (event) => {
-  const products = await fetchProducts(currentPagination.currentPage, parseInt(event.target.value));
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+// selectShow.addEventListener('change', async (event) => {
+//   console.log("Je passe dans l'event listener selectShow")
+//   const products = await fetchProducts(currentPagination.currentPage, parseInt(event.target.value));
+//   setCurrentProducts(products);
+//   render(currentProducts, currentPagination);
+// });
+selectShow.addEventListener('change', event => {
+  fetchProducts(limit = parseInt(event.target.value))
+      .then(() => render(currentProducts)); //, pagination
 });
 
 // Feature 1 - Browse pages
 selectPage.addEventListener('change', event => {
-  fetchProducts(parseInt(event.target.value), currentPagination.pageSize)
+  fetchProducts(pageparseInt(event.target.value))
   .then(setCurrentProducts)
-  .then(() => render(currentProducts, currentPagination)); 
+  .then(() => render(currentProducts, currentPagination));  
 }); 
 
 // Feature 2 - Filter by brands
 selectBrand.addEventListener('change', event => {
   var selectedProducts = []
   var selectedMeta = {}
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
+  fetchProducts(event.target.value).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
     selectedMeta = result.meta //Get the metadata of the current page
     selectedBrand = event.target.value //Update the currently selected brand
     if(selectedBrand == "select"){ //If the user wants to supress the brand selection
@@ -345,6 +350,8 @@ favoriteProducts.addEventListener('click', async () => {
 })
 
 resetFilters.addEventListener('click', async () => {
+  selectBrand.selectedIndex = "select"
+  selectSort.selectedIndex = "select"
   const products = await fetchProducts();
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
@@ -380,8 +387,8 @@ selectSort.addEventListener('change', event => {
 
 })
 
-
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log("Je passe dans le dom event listener")
   const products = await fetchProducts();
   setCurrentProducts(products);
   render(currentProducts, currentPagination);

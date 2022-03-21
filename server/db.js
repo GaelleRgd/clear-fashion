@@ -32,32 +32,6 @@ module.exports.insertProductsInDataBase = async () => {
     }
 }
 
-module.exports.findAllProducts = async () => {
-    // Connection to the data base
-    const client = await MongoClient.connect(url, connectionParams);
-    console.log('Connected to database')
-    const db = client.db(db_name)
-
-    // Get requested products 
-    const collection = db.collection('products');
-    const products = await collection.find().toArray()
-    return(products)
-}
-
-module.exports.findProductsByBrand = async brand =>{
-    // Connection to the data base
-    const client = await MongoClient.connect(url, connectionParams);
-    console.log('Connected to database')
-    const db = client.db(db_name)
-
-    // Get requested products 
-    const collection = db.collection('products');
-    const products = await collection.find({brand}).toArray();
-  
-    // console.log(products);
-    return(products)
-}
-
 module.exports.findProductsByID = async id => {
     // Connection to the data base
     const client = await MongoClient.connect(url, connectionParams);
@@ -72,8 +46,7 @@ module.exports.findProductsByID = async id => {
     return( products )
 }
 
-
-module.exports.findProductsUnderPrice = async maxPrice => {
+module.exports.findProductsByQuery = async (query) => {
     // Connection to the data base
     const client = await MongoClient.connect(url, connectionParams);
     console.log('Connected to database')
@@ -81,41 +54,66 @@ module.exports.findProductsUnderPrice = async maxPrice => {
 
     // Get requested products 
     const collection = db.collection('products');
-    const products = await collection.find({"price":{$lt:maxPrice}}).toArray();
+    const products = await collection.aggregate(query).toArray();
   
     // console.log(products);
     return( products )
 }
 
-module.exports.findProductsByBrandAndPrice = async (brand, price) => {
-    // Connection to the data base
-    const client = await MongoClient.connect(url, connectionParams);
-    console.log('Connected to database')
-    const db = client.db(db_name)
 
-    // Get requested products 
-    const collection = db.collection('products');
-    const products = await collection.find({"brand":brand, "price":{$lt:price}}).toArray();
+///// UNUSED 
+
+// module.exports.findAllProducts = async () => {
+//     // Connection to the data base
+//     const client = await MongoClient.connect(url, connectionParams);
+//     console.log('Connected to database')
+//     const db = client.db(db_name)
+
+//     // Get requested products 
+//     const collection = db.collection('products');
+//     const products = await collection.find().toArray()
+//     return(products)
+// }
+
+// module.exports.findProductsByBrand = async brand =>{
+//     // Connection to the data base
+//     const client = await MongoClient.connect(url, connectionParams);
+//     console.log('Connected to database')
+//     const db = client.db(db_name)
+
+//     // Get requested products 
+//     const collection = db.collection('products');
+//     const products = await collection.find({brand}).toArray();
   
-    // console.log(products);
-    return( products )
-}
+//     // console.log(products);
+//     return(products)
+// }
 
-module.exports.sortProductsByPrice = async () => {
-    // Connection to the data base
-    const client = await MongoClient.connect(url, connectionParams);
-    console.log('Connected to database')
-    const db = client.db(db_name)
+// module.exports.sortProductsByPrice = async () => {
+//     // Connection to the data base
+//     const client = await MongoClient.connect(url, connectionParams);
+//     console.log('Connected to database')
+//     const db = client.db(db_name)
 
-    // Get requested products 
-    const collection = db.collection('products');
-    const products = await collection.aggregate([{$sort:{"price":1}}]).toArray();
+//     // Get requested products 
+//     const collection = db.collection('products');
+//     const products = await collection.aggregate([{$sort:{"price":1}}]).toArray();
   
-    console.log(products);
-}
+//     console.log(products);
+// }
 
-// insertProductsInDataBase()
-// findProductsByBrand("MONTLIMART")
-// findProductsByID("620a5a987dc6b8eba1416d2f")
-// findProductsUnderPrice(50)
-// sortProductsByPrice()
+
+// module.exports.findProductsUnderPrice = async maxPrice => {
+//     // Connection to the data base
+//     const client = await MongoClient.connect(url, connectionParams);
+//     console.log('Connected to database')
+//     const db = client.db(db_name)
+
+//     // Get requested products 
+//     const collection = db.collection('products');
+//     const products = await collection.find({"price":{$lt:maxPrice}}).toArray();
+  
+//     // console.log(products);
+//     return( products )
+// }
+/////
