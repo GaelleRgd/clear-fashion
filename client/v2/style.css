@@ -1,54 +1,71 @@
+.page-header {
+    background-color: #178ca4;
+    margin-top: 0;
+    margin-bottom: 40px;
+    padding: 20px 20px 20px 40px;
+}
+
 body {
-    background-color: rgb(243, 244, 245);
-    color : navy; 
+    background-color: #f9f7f0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color : #072a40; 
+    font-size: 18px;
 }
   
 h1 {
-    color: #1c76a0;
+    color: #f9f7f0;
     text-align: center;
-    font-size: 32px; 
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 48px; 
 }
 
 h2 {
-    color: #1c76a0;
+    color: #072a40;
     text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 26;
 }
 
 button {
-    background-color: #1c76a0;
+    background-color: #178ca4;
     border: none;
-    color: white;
+    color: #f9f7f0;
     padding: 8px 16px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 20px;
 }
 
 #options{
     overflow: hidden;
-    background-color: rgb(175, 207, 245);
+    background-color: #18B7BE;
 }
 
 #options div {
     float: left;
     display: block;
-    color: #f2f2f2;
+    color: #f9f7f0;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+    font-size: 22px;
   }
 
 #indicators{
     overflow: hidden;
-    background-color: rgb(143, 187, 238);
+    background-color: #178ca4;
+}
+
+#indicators h2{
+    color : #f9f7f0; 
 }
 
 #indicators div {
     float: left;
     display: block;
-    color: #f2f2f2;
+    color: #f9f7f0;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;

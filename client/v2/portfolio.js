@@ -52,13 +52,15 @@ const setCurrentProducts = ({result, meta}) => {
  * @return {Object}
  */
 const fetchProducts = async (limit = currentPagination.currentSize, brand = currentBrand, price = currentMaxPrice,
-  sort = currentSort, page = currentPagination.currentPage ) => {
+  sort = currentSort, page = 1 ) => {
+  console.log("Je passe dans le fetchProducts")
   try {
     const response = await fetch(
       // `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
       `https://server-iota-beige.vercel.app/products/search?limit=${limit}&brand=${brand}&price=${price}&sort=${sort}&page=${page}`
     );
     const body = await response.json();
+    console.log(body.data)
     if (body.success !== true) {
       console.error(body);
       return {currentProducts, currentPagination};
@@ -232,36 +234,36 @@ const renderBrandNames = brandNames => {
  * Render page selector
  * @param  {Object} pagination
  */
-const renderIndicators = async pagination => {
-  const {count} = pagination;
-  spanNbProducts.innerHTML = count;
-
-  // Feature 9 - Number of recent products indicator
+const renderIndicators = async () => {
+    // Feature 9 - Number of recent products indicator
   // Feature 11 - Last released date indicator
   let countNew = 0;
   let mostRecentDate = new Date("2020-01-01");
   let twoWeeksAgo = new Date(Date.now() - 12096e5);
-  const products = await fetchProducts(1, count); 
+  const products = await fetchProducts(100000); 
+  const productsTab = products.result;
+  const count = productsTab.length;
+  console.log(productsTab)
   products.result.forEach(elmt => {
     let d = new Date(elmt.released)
     if(d.getTime() > twoWeeksAgo.getTime()){ countNew = countNew + 1 }
     if(d.getTime() > mostRecentDate){ mostRecentDate = d }
   })
+  spanNbProducts.innerHTML = count;
   spanNbNewProducts.innerHTML = countNew; 
   lastReleaseIndicator.innerHTML = mostRecentDate.toLocaleDateString(); 
   
   // Feature 10 - p50, p90 and p95 price value indicator
-  let sortedProducts = sortByPriceAsc(products.result);
-  p50Indicator.innerHTML = sortedProducts[Math.round(count*0.5)].price;
-  p90Indicator.innerHTML = sortedProducts[Math.round(count*0.9)].price;
-  p95Indicator.innerHTML = sortedProducts[Math.round(count*0.95)].price;
+  p50Indicator.innerHTML = productsTab[Math.round(count*0.5)].price;
+  p90Indicator.innerHTML = productsTab[Math.round(count*0.9)].price;
+  p95Indicator.innerHTML = productsTab[Math.round(count*0.95)].price;
 };
 
 const render = (products) => {
   renderProducts(products);
   // renderPagination(pagination);
   renderBrandNames(brandNames);
-  // renderIndicators(pagination);
+  renderIndicators();
 };
 
 /**
@@ -278,8 +280,11 @@ const render = (products) => {
 //   render(currentProducts, currentPagination);
 // });
 selectShow.addEventListener('change', event => {
-  fetchProducts(limit = parseInt(event.target.value))
-      .then(() => render(currentProducts)); //, pagination
+  fetchProducts(parseInt(event.target.value))
+      .then((result) => {
+        setCurrentProducts({result : result.result, meta : result.meta})
+        render(currentProducts, currentPagination)
+      }); //, pagination
 });
 
 // Feature 1 - Browse pages
@@ -291,24 +296,11 @@ selectPage.addEventListener('change', event => {
 
 // Feature 2 - Filter by brands
 selectBrand.addEventListener('change', event => {
-  var selectedProducts = []
-  var selectedMeta = {}
-  fetchProducts(event.target.value).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
-    selectedMeta = result.meta //Get the metadata of the current page
-    selectedBrand = event.target.value //Update the currently selected brand
-    if(selectedBrand == "select"){ //If the user wants to supress the brand selection
-      setCurrentProducts({result : result.result, meta : selectedMeta});
-      render(currentProducts,currentPagination);
-    }
-    else{
-      for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
-        if(result.result[i].brand == event.target.value){ //If a product is from the selected brand ...
-          selectedProducts.push(result.result[i]) //... Add it to the list of products that will be displayed
-        }
-      }
-      setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
-      render(currentProducts, currentPagination); //Render the page with the new data
-    }
+  let selectedBrand = event.target.value
+  if(event.target.value == "select"){selectedBrand = "all"}
+  fetchProducts(12, event.target.value).then((result) => { 
+    setCurrentProducts({result : result.result, meta : result.meta}); //Reset the page data
+    render(currentProducts, currentPagination); //Render the page with the new data
   })
 })
 

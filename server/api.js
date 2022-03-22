@@ -32,7 +32,8 @@ app.get('/products',  async (request, response) => {
   let allProducts = await db.findAllProducts()
   let products = allProducts.slice((page-1)*size, page*size)
 
-  response.send({"success":true,
+  response.send({
+    "success":true,
     "data": {
       "result" : products,
       "meta" : {"currentPage":page,"pageCount":products.length,"pageSize":size,"count":allProducts.length}}}
@@ -53,6 +54,8 @@ app.get('/products/search', async (request, response) => {
   let start = limit*(page-1)
   let end = limit*page
 
+  let allProducts = await db.findAllProducts()
+
   // Choose the query to db 
   let db_query = {}
   if(brand == "all"){db_query = [{$match : {"price" : {$lt: price}}},
@@ -71,7 +74,7 @@ app.get('/products/search', async (request, response) => {
       "page" : page,
       "total" : products.length, 
       "result" : products.slice(start, end),
-      "meta" : {"currentPage":page,"pageCount":products.length,"pageSize":limit,"count":139}
+      "meta" : {"currentPage":page, "currentSize":limit, "pageCount":products.length, "count": allProducts.length}
     }
   })
 }) 

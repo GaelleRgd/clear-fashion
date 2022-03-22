@@ -32,6 +32,18 @@ module.exports.insertProductsInDataBase = async () => {
     }
 }
 
+module.exports.findAllProducts = async () => {
+    // Connection to the data base
+    const client = await MongoClient.connect(url, connectionParams);
+    console.log('Connected to database')
+    const db = client.db(db_name)
+
+    // Get requested products 
+    const collection = db.collection('products');
+    const products = await collection.find().toArray()
+    return(products)
+}
+
 module.exports.findProductsByID = async id => {
     // Connection to the data base
     const client = await MongoClient.connect(url, connectionParams);
@@ -62,18 +74,6 @@ module.exports.findProductsByQuery = async (query) => {
 
 
 ///// UNUSED 
-
-// module.exports.findAllProducts = async () => {
-//     // Connection to the data base
-//     const client = await MongoClient.connect(url, connectionParams);
-//     console.log('Connected to database')
-//     const db = client.db(db_name)
-
-//     // Get requested products 
-//     const collection = db.collection('products');
-//     const products = await collection.find().toArray()
-//     return(products)
-// }
 
 // module.exports.findProductsByBrand = async brand =>{
 //     // Connection to the data base
