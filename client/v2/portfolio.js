@@ -4,7 +4,7 @@
 // current products on the page
 // let currentProducts = [];
 // let currentPagination = {};
-// let favProductsID = [];
+let favProductsID = [];
 let selectedBrand = "select"; 
 let selectedSort = "select";
 
@@ -23,7 +23,7 @@ const selectPage = document.querySelector('#page-select');
 const selectBrand = document.querySelector('#brand-select'); 
 const selectSort = document.querySelector('#sort-select');
 const reasonablePrice = document.querySelector('#reasonable-price');
-const recentlyReleased = document.querySelector('#recently-released'); 
+// const recentlyReleased = document.querySelector('#recently-released'); 
 const favoriteProducts = document.querySelector('#fav-products');
 const resetFilters = document.querySelector('#reset-filters');
 const sectionProducts = document.querySelector('#products');
@@ -243,7 +243,6 @@ const renderIndicators = async () => {
   const products = await fetchProducts(100000); 
   const productsTab = products.result;
   const count = productsTab.length;
-  console.log(productsTab)
   products.result.forEach(elmt => {
     let d = new Date(elmt.released)
     if(d.getTime() > twoWeeksAgo.getTime()){ countNew = countNew + 1 }
@@ -298,36 +297,26 @@ selectPage.addEventListener('change', event => {
 selectBrand.addEventListener('change', event => {
   if(event.target.value == "select"){selectedBrand = "all"}
   fetchProducts(12, event.target.value).then((result) => { 
+    console.log(result.result)
     setCurrentProducts({result : result.result, meta : result.meta}); //Reset the page data
     render(currentProducts, currentPagination); //Render the page with the new data
   })
 })
 
-selectSort.addEventListener('change', event =>{
-  if(event.target.value == "price-asc"){
-    fetchProducts(12, "all", 10000, -1).then((result) => {
-      setCurrentProducts({result: result.result, meta : result.meta});
-      render(currentProducts, currentPagination)
-    })
-  } else {
-    fetchProducts(12, "all", 10000, -1).then((result) => {
-      setCurrentProducts({result: result.result, meta : result.meta});
-      render(currentProducts, currentPagination)
-    })
-}})
 // Feature 3 - Filter by recent products 
-recentlyReleased.addEventListener('click', () =>{
-  let selectedProducts = []
-  let twoWeeksAgo = new Date(Date.now() - 12096e5); //12096e5 is two weeks in miliseconds
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
-    for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
-      let d = new Date(result.result[i].released)
-      if(d.getTime() > twoWeeksAgo.getTime()){ selectedProducts.push(result.result[i]) }
-    }
-    setCurrentProducts({result : selectedProducts, meta : result.meta}); //Reset the page data
-    render(currentProducts, currentPagination); //Render the page with the new data
-  })
-})
+// We didn't integrate the date in our fetching so we can't sort by date 
+// recentlyReleased.addEventListener('click', () =>{
+//   let selectedProducts = []
+//   let twoWeeksAgo = new Date(Date.now() - 12096e5); //12096e5 is two weeks in miliseconds
+//   fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
+//     for(let i = 0; i < result.result.length; i++){ //Go throught the products of the initial page
+//       let d = new Date(result.result[i].released)
+//       if(d.getTime() > twoWeeksAgo.getTime()){ selectedProducts.push(result.result[i]) }
+//     }
+//     setCurrentProducts({result : selectedProducts, meta : result.meta}); //Reset the page data
+//     render(currentProducts, currentPagination); //Render the page with the new data
+//   })
+// })
 
 // Feature 4 - Filter by reasonable price 
 reasonablePrice.addEventListener('click', () => {
@@ -344,13 +333,30 @@ reasonablePrice.addEventListener('click', () => {
 // Feature 14 - Filter by favorite
 favoriteProducts.addEventListener('click', async () => {
   let favProducts = [];
-  const products = await fetchProducts(1, 139); 
+  const products = await fetchProducts(10000); 
   products.result.forEach(elmt => {
-    if(favProductsID.includes(elmt.uuid)){ favProducts.push(elmt) }
+    console.log(elmt._id)
+    if(favProductsID.includes(elmt._id)){ favProducts.push(elmt) }
   })
+  console.log(favProducts)
   setCurrentProducts({result : favProducts, meta : products.meta}); //Reset the page data
   render(currentProducts, currentPagination); //Render the page with the new data
 })
+
+selectSort.addEventListener('change', event =>{
+  console.log("je passe dans le event listener.")
+  if(event.target.value == "price-asc"){
+    fetchProducts(12, "all", 10000, 1).then((result) => {
+      setCurrentProducts({result: result.result, meta : result.meta});
+      render(currentProducts, currentPagination)
+    })
+  } else {
+    fetchProducts(12, "all", 10000, -1).then((result) => {
+      setCurrentProducts({result: result.result, meta : result.meta});
+      render(currentProducts, currentPagination)
+    })
+    selectSort.selectedIndex = "select"
+}})
 
 resetFilters.addEventListener('click', async () => {
   selectBrand.selectedIndex = "select"
@@ -360,38 +366,8 @@ resetFilters.addEventListener('click', async () => {
   render(currentProducts, currentPagination);
 })
 
-// selectSort.addEventListener('change', event => {
-//   let selectedProducts = []
-//   let selectedMeta = {}
-//   selectedSort = event.target.value;
-//   fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
-//     selectedMeta = result.meta //Get the metadata of the current page
-//     if(selectedSort == "select"){ //If the user wants to supress the brand selection
-//       setCurrentProducts({result : result.result, meta : selectedMeta});
-//       render(currentProducts,currentPagination);
-//     }
-//     else{
-//       if(selectedSort == "date-asc"){
-//         selectedProducts = sortByDateAsc(result.result)
-//       }
-//       if(selectedSort == "date-desc"){
-//         selectedProducts = sortByDateDesc(result.result)
-//       }
-//       if(selectedSort == "price-asc"){ // Feature 5 - Sort by price (ascending)
-//         selectedProducts = sortByPriceAsc(result.result)
-//       }
-//       if(selectedSort == "price-desc"){
-//         selectedProducts = sortByPriceDesc(result.result)
-//       }
-//       setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
-//       render(currentProducts, currentPagination); //Render the page with the new data
-//     }
-//   })
-
-// })
 
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log("Je passe dans le dom event listener")
   const products = await fetchProducts();
   setCurrentProducts(products);
   render(currentProducts, currentPagination);

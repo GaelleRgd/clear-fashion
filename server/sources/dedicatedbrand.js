@@ -21,6 +21,7 @@ const parse = data => {
           .find('.productList-price')
           .text()
       );
+      const date = new Date()
       /*
       const link = $(element)
         .find('a.productList-link')  
@@ -28,7 +29,7 @@ const parse = data => {
       .find('.productList-image')
       console.log(image)*/
 
-      return {"brand":"DEDICATED", name, price};
+      return {"brand":"DEDICATED", name, price, date};
     })
     .get();
 }; 
