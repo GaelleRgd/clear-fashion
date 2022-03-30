@@ -296,7 +296,6 @@ selectPage.addEventListener('change', event => {
 
 // Feature 2 - Filter by brands
 selectBrand.addEventListener('change', event => {
-  let selectedBrand = event.target.value
   if(event.target.value == "select"){selectedBrand = "all"}
   fetchProducts(12, event.target.value).then((result) => { 
     setCurrentProducts({result : result.result, meta : result.meta}); //Reset the page data
@@ -304,6 +303,18 @@ selectBrand.addEventListener('change', event => {
   })
 })
 
+selectSort.addEventListener('change', event =>{
+  if(event.target.value == "price-asc"){
+    fetchProducts(12, "all", 10000, -1).then((result) => {
+      setCurrentProducts({result: result.result, meta : result.meta});
+      render(currentProducts, currentPagination)
+    })
+  } else {
+    fetchProducts(12, "all", 10000, -1).then((result) => {
+      setCurrentProducts({result: result.result, meta : result.meta});
+      render(currentProducts, currentPagination)
+    })
+}})
 // Feature 3 - Filter by recent products 
 recentlyReleased.addEventListener('click', () =>{
   let selectedProducts = []
@@ -349,35 +360,35 @@ resetFilters.addEventListener('click', async () => {
   render(currentProducts, currentPagination);
 })
 
-selectSort.addEventListener('change', event => {
-  let selectedProducts = []
-  let selectedMeta = {}
-  selectedSort = event.target.value;
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
-    selectedMeta = result.meta //Get the metadata of the current page
-    if(selectedSort == "select"){ //If the user wants to supress the brand selection
-      setCurrentProducts({result : result.result, meta : selectedMeta});
-      render(currentProducts,currentPagination);
-    }
-    else{
-      if(selectedSort == "date-asc"){
-        selectedProducts = sortByDateAsc(result.result)
-      }
-      if(selectedSort == "date-desc"){
-        selectedProducts = sortByDateDesc(result.result)
-      }
-      if(selectedSort == "price-asc"){ // Feature 5 - Sort by price (ascending)
-        selectedProducts = sortByPriceAsc(result.result)
-      }
-      if(selectedSort == "price-desc"){
-        selectedProducts = sortByPriceDesc(result.result)
-      }
-      setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
-      render(currentProducts, currentPagination); //Render the page with the new data
-    }
-  })
+// selectSort.addEventListener('change', event => {
+//   let selectedProducts = []
+//   let selectedMeta = {}
+//   selectedSort = event.target.value;
+//   fetchProducts(currentPagination.currentPage,currentPagination.pageSize).then((result) => { //We fetch the initial page so that the selection could be change later on without going back manually to the initial page
+//     selectedMeta = result.meta //Get the metadata of the current page
+//     if(selectedSort == "select"){ //If the user wants to supress the brand selection
+//       setCurrentProducts({result : result.result, meta : selectedMeta});
+//       render(currentProducts,currentPagination);
+//     }
+//     else{
+//       if(selectedSort == "date-asc"){
+//         selectedProducts = sortByDateAsc(result.result)
+//       }
+//       if(selectedSort == "date-desc"){
+//         selectedProducts = sortByDateDesc(result.result)
+//       }
+//       if(selectedSort == "price-asc"){ // Feature 5 - Sort by price (ascending)
+//         selectedProducts = sortByPriceAsc(result.result)
+//       }
+//       if(selectedSort == "price-desc"){
+//         selectedProducts = sortByPriceDesc(result.result)
+//       }
+//       setCurrentProducts({result : selectedProducts, meta : selectedMeta}); //Reset the page data
+//       render(currentProducts, currentPagination); //Render the page with the new data
+//     }
+//   })
 
-})
+// })
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log("Je passe dans le dom event listener")
