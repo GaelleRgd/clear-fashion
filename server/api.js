@@ -19,7 +19,11 @@ app.use(helmet());
 app.options('*', cors());
 
 app.get('/', (request, response) => {
-  response.send({'ack': true});
+  response.send({
+    'ack': true, 
+    '/products': "No params",
+    '/products/search': "limit, brand, price, sort, page"
+  }); 
 });
 
 app.get('/products',  async (request, response) => {

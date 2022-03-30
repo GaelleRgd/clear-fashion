@@ -60,7 +60,7 @@ const fetchProducts = async (limit = currentPagination.currentSize, brand = curr
       `https://server-iota-beige.vercel.app/products/search?limit=${limit}&brand=${brand}&price=${price}&sort=${sort}&page=${page}`
     );
     const body = await response.json();
-    console.log(body.data)
+    // console.log(body.data)
     if (body.success !== true) {
       console.error(body);
       return {currentProducts, currentPagination};
@@ -208,8 +208,9 @@ const renderProducts = products => {
  */
 const renderPagination = pagination => {
   const {currentPage, pageCount} = pagination;
+  console.log(currentPage)
   const options = Array.from(
-    {'length': pageCount},
+    {'length': parseInt(pageCount / pagination.currentSize)},
     (value, index) => `<option value="${index + 1}">${index + 1}</option>`
   ).join('');
   
@@ -260,7 +261,7 @@ const renderIndicators = async () => {
 
 const render = (products) => {
   renderProducts(products);
-  // renderPagination(pagination);
+  renderPagination(currentPagination);
   renderBrandNames(brandNames);
   renderIndicators();
 };
@@ -288,10 +289,14 @@ selectShow.addEventListener('change', event => {
 
 // Feature 1 - Browse pages
 selectPage.addEventListener('change', event => {
-  fetchProducts(pageparseInt(event.target.value))
-  .then(setCurrentProducts)
-  .then(() => render(currentProducts, currentPagination));  
-}); 
+  console.log("Je passe dans le changement de page")
+  let nbOfProducts = 12 * parseInt(event.target.value);
+  fetchProducts((nbOfProducts))
+  .then((result) => {
+    result.meta.currentPage = parseInt(event.target.value)
+    setCurrentProducts({result: result.result, meta: result.meta})
+    render(currentProducts, currentPagination)  
+})}) 
 
 // Feature 2 - Filter by brands
 selectBrand.addEventListener('change', event => {
@@ -335,10 +340,8 @@ favoriteProducts.addEventListener('click', async () => {
   let favProducts = [];
   const products = await fetchProducts(10000); 
   products.result.forEach(elmt => {
-    console.log(elmt._id)
     if(favProductsID.includes(elmt._id)){ favProducts.push(elmt) }
   })
-  console.log(favProducts)
   setCurrentProducts({result : favProducts, meta : products.meta}); //Reset the page data
   render(currentProducts, currentPagination); //Render the page with the new data
 })
@@ -361,7 +364,7 @@ selectSort.addEventListener('change', event =>{
 resetFilters.addEventListener('click', async () => {
   selectBrand.selectedIndex = "select"
   selectSort.selectedIndex = "select"
-  const products = await fetchProducts();
+  const products = await fetchProducts(12, "all", 10000, 1, 1);
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 })
